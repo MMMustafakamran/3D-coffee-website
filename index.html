@@ -58,8 +58,8 @@
     #scroll-cue::after { content: ""; width: 1px; height: 34px; background: linear-gradient(var(--copper), transparent); animation: cue 1.8s ease-in-out infinite; }
     @keyframes cue { 0%,100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(8px); opacity: .35; } }
 
-    #brandnav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4vw; background: linear-gradient(180deg, rgba(242,230,211,.84), rgba(242,230,211,0)); color: var(--ink); opacity: 1; pointer-events: auto; transform: none; transition: background .4s ease, border-color .4s ease, opacity .4s ease, transform .4s ease; }
-    #brandnav.on { background: rgba(242,230,211,.9); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+    #brandnav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4vw; background: transparent; color: var(--ink); opacity: 1; pointer-events: auto; transform: none; transition: opacity .4s ease, transform .4s ease; }
+    #brandnav.on { background: transparent; border-bottom: 0; backdrop-filter: none; }
     #brandnav .links { display: flex; gap: 2.5vw; }
     #brandnav a { color: var(--ink); font-size: 10px; letter-spacing: .2em; text-decoration: none; text-transform: uppercase; transition: color .2s ease; }
     #brandnav a:hover, #brandnav a:focus-visible { color: var(--copper); }
