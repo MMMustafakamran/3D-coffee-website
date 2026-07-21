@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#090806" />
+  <meta name="theme-color" content="#f2e6d3" />
   <meta name="description" content="EMBER is a quiet coffee ritual, designed for mornings already in motion." />
   <meta property="og:title" content="EMBER — Carry the ritual" />
   <meta property="og:description" content="A cinematic coffee ritual for mornings already in motion." />
@@ -11,23 +11,24 @@
   <title>EMBER — Carry the ritual</title>
   <style>
     :root {
-      --bg: #090806;
-      --bg-soft: #110e0b;
+      --bg: #f2e6d3;
+      --bg-soft: #e6d4b9;
       --green: #16231e;
-      --copper: #c17b45;
-      --copper-bright: #e7a56d;
-      --cream: #f4eadc;
-      --muted: rgba(244, 234, 220, .58);
-      --line: rgba(244, 234, 220, .12);
+      --ink: #2b2118;
+      --copper: #a86d3f;
+      --copper-bright: #b57846;
+      --cream: #f7eddf;
+      --muted: rgba(43, 33, 24, .62);
+      --line: rgba(43, 33, 24, .15);
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: auto; }
-    body { margin: 0; background: var(--bg); color: var(--cream); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, sans-serif; -webkit-font-smoothing: antialiased; }
     a { color: inherit; }
-    .skip-link { position: fixed; left: 16px; top: 10px; z-index: 200; transform: translateY(-150%); background: var(--cream); color: var(--bg); padding: 10px 14px; border-radius: 999px; }
+    .skip-link { position: fixed; left: 16px; top: 10px; z-index: 200; transform: translateY(-150%); background: var(--ink); color: var(--cream); padding: 10px 14px; border-radius: 2px; }
     .skip-link:focus { transform: none; }
 
-    #loader { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; background: var(--bg); transition: opacity .8s ease; }
+    #loader { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; background: #090806; transition: opacity .8s ease; }
     #loader.done { opacity: 0; pointer-events: none; }
     #loader .mark, .mark { color: var(--copper-bright); font-size: 13px; letter-spacing: .48em; text-indent: .48em; text-transform: uppercase; }
     #loader .bar { width: 190px; height: 1px; overflow: hidden; background: rgba(193,123,69,.24); }
@@ -38,31 +39,37 @@
     #film { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
     #vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse 65% 70% at 50% 50%, transparent 48%, rgba(9,8,6,.9) 98%), linear-gradient(90deg, rgba(9,8,6,.9), transparent 17%, transparent 83%, rgba(9,8,6,.9)); }
     #grain { position: absolute; inset: 0; z-index: 6; pointer-events: none; opacity: .045; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
-    .caption { position: absolute; z-index: 10; max-width: 520px; opacity: 0; pointer-events: none; will-change: opacity, transform; }
+    .caption { position: absolute; z-index: 10; max-width: 520px; color: var(--cream); opacity: 0; pointer-events: none; text-shadow: 0 2px 18px rgba(0,0,0,.24); will-change: opacity, transform; }
     .caption h1, .caption h2 { margin: 0; font-weight: 600; letter-spacing: -.045em; line-height: .98; }
     .caption h1 { font-size: clamp(48px, 8vw, 112px); }
     .caption h2 { font-size: clamp(34px, 5vw, 72px); }
     .caption p { margin: 18px 0 0; max-width: 34ch; color: var(--muted); font-size: clamp(15px, 1.5vw, 20px); line-height: 1.45; }
     .copper { color: var(--copper-bright); }
+    .caption .copper { color: var(--cream); }
     .cap-center { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
     .cap-center p { margin-right: auto; margin-left: auto; }
     .cap-left { top: 50%; left: 7vw; transform: translateY(-50%); }
     .cap-right { top: 50%; right: 7vw; transform: translateY(-50%); text-align: right; }
     .cap-right p { margin-left: auto; }
     .cap-bottom { bottom: 10vh; left: 50%; transform: translateX(-50%); text-align: center; }
-    .cta { display: inline-block; margin-top: 28px; padding: 14px 30px; border: 1px solid var(--copper); border-radius: 999px; color: var(--copper-bright); text-decoration: none; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; transition: background .25s ease, color .25s ease; pointer-events: auto; }
+    .cta { display: inline-block; margin-top: 28px; padding: 14px 24px; border: 1px solid currentColor; border-radius: 2px; color: var(--copper-bright); text-decoration: none; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; transition: background .25s ease, color .25s ease; pointer-events: auto; }
     .cta:hover, .cta:focus-visible { background: var(--copper); color: var(--bg); }
     #scroll-cue { position: absolute; bottom: 4.5vh; left: 50%; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px; transform: translateX(-50%); color: var(--muted); font-size: 10px; letter-spacing: .35em; text-indent: .35em; text-transform: uppercase; transition: opacity .4s ease; }
     #scroll-cue::after { content: ""; width: 1px; height: 34px; background: linear-gradient(var(--copper), transparent); animation: cue 1.8s ease-in-out infinite; }
     @keyframes cue { 0%,100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(8px); opacity: .35; } }
 
-    #brandnav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4vw; background: rgba(9,8,6,.76); backdrop-filter: blur(14px); opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity .4s ease, transform .4s ease; }
-    #brandnav.on { opacity: 1; pointer-events: auto; transform: none; }
+    #brandnav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4vw; background: linear-gradient(180deg, rgba(242,230,211,.84), rgba(242,230,211,0)); color: var(--ink); opacity: 1; pointer-events: auto; transform: none; transition: background .4s ease, border-color .4s ease, opacity .4s ease, transform .4s ease; }
+    #brandnav.on { background: rgba(242,230,211,.9); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
     #brandnav .links { display: flex; gap: 2.5vw; }
-    #brandnav a { color: var(--muted); font-size: 11px; letter-spacing: .17em; text-decoration: none; text-transform: uppercase; transition: color .2s ease; }
-    #brandnav a:hover, #brandnav a:focus-visible { color: var(--cream); }
-    #brandnav .navcta { padding: 8px 17px; border: 1px solid var(--copper); border-radius: 999px; color: var(--copper-bright); }
+    #brandnav a { color: var(--ink); font-size: 10px; letter-spacing: .2em; text-decoration: none; text-transform: uppercase; transition: color .2s ease; }
+    #brandnav a:hover, #brandnav a:focus-visible { color: var(--copper); }
+    #brandnav .navcta { padding: 9px 16px; border: 1px solid var(--ink); border-radius: 2px; color: var(--ink); }
+    #brandnav .navcta:hover, #brandnav .navcta:focus-visible { background: var(--ink); color: var(--cream); }
+    .wordmark { display: inline-flex; align-items: baseline; gap: 10px; text-decoration: none; }
+    .wordmark strong { font-size: 16px; font-weight: 500; letter-spacing: .28em; }
+    .wordmark small { color: var(--muted); font-size: 8px; letter-spacing: .28em; }
 
+    main, footer { background: var(--bg); }
     .bp { position: relative; max-width: 1500px; margin: 0 auto; padding: 15vh 7vw; }
     .bp .kicker { margin: 0 0 18px; color: var(--copper-bright); font-size: 11px; letter-spacing: .32em; text-transform: uppercase; }
     .bp h2 { margin: 0; font-size: clamp(38px, 5.2vw, 78px); font-weight: 600; letter-spacing: -.055em; line-height: .98; }
@@ -98,8 +105,8 @@
     .footer-cols { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 5vw; max-width: 1500px; margin: 0 auto; }
     footer h3 { margin: 0 0 16px; color: var(--muted); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; }
     footer a { display: block; margin-bottom: 10px; color: var(--muted); font-size: 14px; text-decoration: none; }
-    footer a:hover, footer a:focus-visible { color: var(--cream); }
-    footer .fine { margin: 8vh auto 0; color: rgba(244,234,220,.3); font-size: 10px; letter-spacing: .16em; text-align: center; text-transform: uppercase; }
+    footer a:hover, footer a:focus-visible { color: var(--ink); }
+    footer .fine { margin: 8vh auto 0; color: rgba(43,33,24,.42); font-size: 10px; letter-spacing: .16em; text-align: center; text-transform: uppercase; }
     @media (max-width: 800px) {
       #track { height: 620vh; }
       #brandnav { padding: 15px 5vw; }
@@ -144,7 +151,7 @@
     </div>
   </div>
 
-  <nav id="brandnav" aria-label="Primary navigation"><a class="mark" href="#story">EMBER</a><div class="links"><a href="#story">Story</a><a href="#craft">Craft</a><a href="#specs">Blend</a><a href="#gallery">Gallery</a></div><a class="navcta" href="#reserve">Shop coffee</a></nav>
+  <nav id="brandnav" aria-label="Primary navigation"><a class="wordmark" href="#story"><strong>EMBER</strong><small>ROASTERS</small></a><div class="links"><a href="#story">Coffee</a><a href="#craft">The roast</a><a href="#gallery">Cafés</a><a href="#gallery">Journal</a><a href="mailto:hello@ember.coffee">Contact</a></div><a class="navcta" href="#reserve">Order ahead</a></nav>
 
   <main>
     <section class="bp bp-manifesto" id="story"><div data-reveal><p class="kicker">EMBER COFFEE</p><h2>Good coffee should follow you.</h2></div></section>
