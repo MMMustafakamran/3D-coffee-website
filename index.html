@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#090806" />
+  <meta name="description" content="EMBER is a quiet coffee ritual, designed for mornings already in motion." />
+  <meta property="og:title" content="EMBER — Carry the ritual" />
+  <meta property="og:description" content="A cinematic coffee ritual for mornings already in motion." />
+  <meta property="og:image" content="images/hero.webp" />
+  <title>EMBER — Carry the ritual</title>
+  <style>
+    :root {
+      --bg: #090806;
+      --bg-soft: #110e0b;
+      --green: #16231e;
+      --copper: #c17b45;
+      --copper-bright: #e7a56d;
+      --cream: #f4eadc;
+      --muted: rgba(244, 234, 220, .58);
+      --line: rgba(244, 234, 220, .12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body { margin: 0; background: var(--bg); color: var(--cream); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    .skip-link { position: fixed; left: 16px; top: 10px; z-index: 200; transform: translateY(-150%); background: var(--cream); color: var(--bg); padding: 10px 14px; border-radius: 999px; }
+    .skip-link:focus { transform: none; }
+
+    #loader { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; background: var(--bg); transition: opacity .8s ease; }
+    #loader.done { opacity: 0; pointer-events: none; }
+    #loader .mark, .mark { color: var(--copper-bright); font-size: 13px; letter-spacing: .48em; text-indent: .48em; text-transform: uppercase; }
+    #loader .bar { width: 190px; height: 1px; overflow: hidden; background: rgba(193,123,69,.24); }
+    #loader .bar i { display: block; width: 0; height: 100%; background: var(--copper); transition: width .2s ease; }
+
+    #track { position: relative; height: 690vh; }
+    #stage { position: sticky; top: 0; width: 100%; height: 100vh; overflow: hidden; background: var(--bg); }
+    #film { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+    #vignette { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse 65% 70% at 50% 50%, transparent 48%, rgba(9,8,6,.9) 98%), linear-gradient(90deg, rgba(9,8,6,.9), transparent 17%, transparent 83%, rgba(9,8,6,.9)); }
+    #grain { position: absolute; inset: 0; z-index: 6; pointer-events: none; opacity: .045; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E"); mix-blend-mode: overlay; }
+    .caption { position: absolute; z-index: 10; max-width: 520px; opacity: 0; pointer-events: none; will-change: opacity, transform; }
+    .caption h1, .caption h2 { margin: 0; font-weight: 600; letter-spacing: -.045em; line-height: .98; }
+    .caption h1 { font-size: clamp(48px, 8vw, 112px); }
+    .caption h2 { font-size: clamp(34px, 5vw, 72px); }
+    .caption p { margin: 18px 0 0; max-width: 34ch; color: var(--muted); font-size: clamp(15px, 1.5vw, 20px); line-height: 1.45; }
+    .copper { color: var(--copper-bright); }
+    .cap-center { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .cap-center p { margin-right: auto; margin-left: auto; }
+    .cap-left { top: 50%; left: 7vw; transform: translateY(-50%); }
+    .cap-right { top: 50%; right: 7vw; transform: translateY(-50%); text-align: right; }
+    .cap-right p { margin-left: auto; }
+    .cap-bottom { bottom: 10vh; left: 50%; transform: translateX(-50%); text-align: center; }
+    .cta { display: inline-block; margin-top: 28px; padding: 14px 30px; border: 1px solid var(--copper); border-radius: 999px; color: var(--copper-bright); text-decoration: none; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; transition: background .25s ease, color .25s ease; pointer-events: auto; }
+    .cta:hover, .cta:focus-visible { background: var(--copper); color: var(--bg); }
+    #scroll-cue { position: absolute; bottom: 4.5vh; left: 50%; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px; transform: translateX(-50%); color: var(--muted); font-size: 10px; letter-spacing: .35em; text-indent: .35em; text-transform: uppercase; transition: opacity .4s ease; }
+    #scroll-cue::after { content: ""; width: 1px; height: 34px; background: linear-gradient(var(--copper), transparent); animation: cue 1.8s ease-in-out infinite; }
+    @keyframes cue { 0%,100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(8px); opacity: .35; } }
+
+    #brandnav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 4vw; background: rgba(9,8,6,.76); backdrop-filter: blur(14px); opacity: 0; pointer-events: none; transform: translateY(-8px); transition: opacity .4s ease, transform .4s ease; }
+    #brandnav.on { opacity: 1; pointer-events: auto; transform: none; }
+    #brandnav .links { display: flex; gap: 2.5vw; }
+    #brandnav a { color: var(--muted); font-size: 11px; letter-spacing: .17em; text-decoration: none; text-transform: uppercase; transition: color .2s ease; }
+    #brandnav a:hover, #brandnav a:focus-visible { color: var(--cream); }
+    #brandnav .navcta { padding: 8px 17px; border: 1px solid var(--copper); border-radius: 999px; color: var(--copper-bright); }
+
+    .bp { position: relative; max-width: 1500px; margin: 0 auto; padding: 15vh 7vw; }
+    .bp .kicker { margin: 0 0 18px; color: var(--copper-bright); font-size: 11px; letter-spacing: .32em; text-transform: uppercase; }
+    .bp h2 { margin: 0; font-size: clamp(38px, 5.2vw, 78px); font-weight: 600; letter-spacing: -.055em; line-height: .98; }
+    .lead { max-width: 42ch; margin: 22px 0 0; color: var(--muted); font-size: clamp(15px, 1.35vw, 19px); line-height: 1.7; }
+    [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.2,.6,.2,1), transform .8s cubic-bezier(.2,.6,.2,1); }
+    [data-reveal].in { opacity: 1; transform: none; }
+    .bp-manifesto { padding-top: 24vh; padding-bottom: 24vh; text-align: center; }
+    .bp-manifesto h2 { max-width: 14ch; margin: 0 auto; font-size: clamp(48px, 8vw, 124px); }
+    .bp-split { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 7vw; align-items: center; }
+    .bp-split.flip > :first-child { order: 2; }
+    .img-blend { display: block; width: 100%; max-height: 720px; object-fit: cover; border-radius: 6px; -webkit-mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, #000 60%, transparent 100%); mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, #000 60%, transparent 100%); }
+    .bp-stats { display: flex; justify-content: center; flex-wrap: wrap; gap: 8vw; text-align: center; }
+    .bp-stats .num { color: var(--copper-bright); font-size: clamp(42px, 6vw, 86px); font-weight: 600; letter-spacing: -.05em; }
+    .bp-stats .lbl { margin-top: 7px; color: var(--muted); font-size: 10px; letter-spacing: .25em; text-transform: uppercase; }
+    .bp-specs table { width: min(780px, 100%); margin: 0 auto; border-collapse: collapse; }
+    .bp-specs td { padding: 17px 8px; border-bottom: 1px solid var(--line); font-size: 15px; }
+    .bp-specs td:first-child { color: var(--muted); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+    .bp-specs td:last-child { text-align: right; }
+    .bp-quote { max-width: 740px; text-align: center; }
+    blockquote { margin: 0; font-size: clamp(25px, 3.5vw, 48px); font-weight: 500; letter-spacing: -.04em; line-height: 1.18; }
+    cite { display: block; margin-top: 24px; color: var(--muted); font-size: 11px; font-style: normal; letter-spacing: .24em; text-transform: uppercase; }
+    .bp-gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .bp-gallery figure { margin: 0; overflow: hidden; border-radius: 6px; }
+    .bp-gallery img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.6,.2,1); }
+    .bp-gallery figure:hover img { transform: scale(1.03); }
+    .g1 { grid-column: span 7; aspect-ratio: 4/3; }
+    .g2 { grid-column: span 5; aspect-ratio: 4/5; }
+    .g3 { grid-column: span 5; aspect-ratio: 1/1; }
+    .g4 { grid-column: span 7; aspect-ratio: 16/10; }
+    .bp-ctaband { padding-top: 22vh; padding-bottom: 22vh; text-align: center; }
+    .bp-ctaband h2 { max-width: 13ch; margin: 0 auto; }
+    footer { padding: 10vh 7vw 6vh; border-top: 1px solid var(--line); }
+    .footer-cols { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 5vw; max-width: 1500px; margin: 0 auto; }
+    footer h3 { margin: 0 0 16px; color: var(--muted); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; }
+    footer a { display: block; margin-bottom: 10px; color: var(--muted); font-size: 14px; text-decoration: none; }
+    footer a:hover, footer a:focus-visible { color: var(--cream); }
+    footer .fine { margin: 8vh auto 0; color: rgba(244,234,220,.3); font-size: 10px; letter-spacing: .16em; text-align: center; text-transform: uppercase; }
+    @media (max-width: 800px) {
+      #track { height: 620vh; }
+      #brandnav { padding: 15px 5vw; }
+      #brandnav .links { display: none; }
+      .caption { max-width: 80vw; }
+      .cap-left, .cap-right { left: 7vw; right: 7vw; top: auto; bottom: 15vh; transform: none; text-align: left; }
+      .cap-right p { margin-left: 0; }
+      .bp { padding: 13vh 7vw; }
+      .bp-split { grid-template-columns: 1fr; gap: 5vh; }
+      .bp-split.flip > :first-child { order: 0; }
+      .bp-gallery figure { grid-column: span 12; }
+      .footer-cols { grid-template-columns: 1fr 1fr; gap: 8vw 5vw; }
+      footer .footer-intro { grid-column: span 2; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      #track { height: 100vh; }
+      #stage { position: relative; }
+      #film { opacity: 0; }
+      #stage { background: url('images/hero.webp') center / contain no-repeat, var(--bg); }
+      .caption { opacity: 1 !important; transform: translate(-50%, -50%) !important; }
+      .caption:not(:first-of-type):not(:last-of-type) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#story">Skip to brand story</a>
+  <div id="loader" aria-live="polite"><div class="mark">EMBER</div><div class="bar"><i id="loadbar"></i></div><span style="color:var(--muted);font-size:11px;letter-spacing:.18em;text-transform:uppercase">Loading the ritual</span></div>
+
+  <div id="track">
+    <div id="stage">
+      <canvas id="film" aria-label="Cinematic coffee cup film controlled by scrolling"></canvas>
+      <div id="vignette"></div><div id="grain"></div>
+      <div class="caption cap-center" data-in="-0.05" data-hold="0.025" data-out="0.07"><h1>EMBER <span class="copper">Coffee</span></h1><p>Carry the ritual.</p></div>
+      <div class="caption cap-left" data-in="0.09" data-hold="0.14" data-out="0.20"><h2>Start with<br><span class="copper">something real.</span></h2><p>Roasted for depth. Built for the first quiet minute.</p></div>
+      <div class="caption cap-right" data-in="0.25" data-hold="0.30" data-out="0.36"><h2>The lid lifts.<br><span class="copper">The day opens.</span></h2><p>A small ritual that travels well.</p></div>
+      <div class="caption cap-left" data-in="0.41" data-hold="0.47" data-out="0.53"><h2>Warmth,<br>held close.</h2><p>Quiet materials. A cup made to stay in your hand.</p></div>
+      <div class="caption cap-right" data-in="0.58" data-hold="0.64" data-out="0.70"><h2>Deep roast.<br><span class="copper">Clean finish.</span></h2><p>Chocolate, toasted sugar, a measured edge.</p></div>
+      <div class="caption cap-left" data-in="0.75" data-hold="0.81" data-out="0.87"><h2>For mornings<br>already in motion.</h2><p>Make the everyday feel considered.</p></div>
+      <div class="caption cap-bottom" data-in="0.91" data-hold="0.975" data-out="1.08"><h1>EMBER <span class="copper">Coffee</span></h1><p>The ritual, wherever you are.</p><a class="cta" href="#reserve">Discover the blend</a></div>
+      <div id="scroll-cue">Scroll</div>
+    </div>
+  </div>
+
+  <nav id="brandnav" aria-label="Primary navigation"><a class="mark" href="#story">EMBER</a><div class="links"><a href="#story">Story</a><a href="#craft">Craft</a><a href="#specs">Blend</a><a href="#gallery">Gallery</a></div><a class="navcta" href="#reserve">Shop coffee</a></nav>
+
+  <main>
+    <section class="bp bp-manifesto" id="story"><div data-reveal><p class="kicker">EMBER COFFEE</p><h2>Good coffee should follow you.</h2></div></section>
+    <section class="bp"><div class="bp-split"><div data-reveal><p class="kicker">Origin</p><h2>Built for mornings already in motion.</h2><p class="lead">EMBER started with a simple itch: coffee that could feel as intentional outside the café as it does inside one. We roast in small batches and make the ritual easy to carry.</p></div><img class="img-blend" data-reveal src="images/origin.webp" alt="EMBER coffee cup in warm light" loading="lazy" /></div></section>
+    <section class="bp" id="craft"><div class="bp-split flip"><div data-reveal><p class="kicker">Craft — 01</p><h2>Roasted for depth.</h2><p class="lead">A darker silhouette, a softer landing. Notes of cacao, toasted sugar, and a gentle fruit brightness keep the cup layered from first sip to last.</p></div><img class="img-blend" data-reveal src="images/bean-crop.webp" alt="Coffee beans floating above the EMBER cup" loading="lazy" /></div></section>
+    <section class="bp"><div class="bp-split"><div data-reveal><p class="kicker">Craft — 02</p><h2>Designed for the hand.</h2><p class="lead">The lid rises cleanly. The copper line catches the light. Every surface is considered because the moments between destinations deserve a little ceremony.</p></div><img class="img-blend" data-reveal src="images/lid-crop.webp" alt="Close detail of the EMBER coffee lid" loading="lazy" /></div></section>
+    <section class="bp"><div class="bp-stats"><div data-reveal><div class="num">100%</div><div class="lbl">Arabica coffee</div></div><div data-reveal><div class="num">01</div><div class="lbl">Daily ritual</div></div><div data-reveal><div class="num">24h</div><div class="lbl">Freshness window</div></div></div></section>
+    <section class="bp bp-specs" id="specs"><div data-reveal><p class="kicker" style="text-align:center">The blend</p><table><tr><td>Profile</td><td>Dark chocolate · toasted sugar</td></tr><tr><td>Roast</td><td>Medium-dark</td></tr><tr><td>Origin</td><td>Seasonal single-estate lots</td></tr><tr><td>Process</td><td>Washed and natural</td></tr><tr><td>Format</td><td>Whole bean · ground to order</td></tr></table></div></section>
+    <section class="bp bp-quote"><div data-reveal><blockquote>“A coffee ritual with the volume turned down.”</blockquote><cite>Early owner · Lisbon</cite></div></section>
+    <section class="bp" id="gallery"><div class="bp-gallery"><figure class="g1" data-reveal><img src="images/gallery-wide.webp" alt="EMBER cup framed by warm caramel light" loading="lazy" /></figure><figure class="g2" data-reveal><img src="images/detail-lid.webp" alt="EMBER cup lid rising" loading="lazy" /></figure><figure class="g3" data-reveal><img src="images/detail-beans.webp" alt="Roasted coffee beans around the cup" loading="lazy" /></figure><figure class="g4" data-reveal><img src="images/gallery-final.webp" alt="EMBER coffee cup final product view" loading="lazy" /></figure></div></section>
+    <section class="bp bp-ctaband" id="reserve"><div data-reveal><p class="kicker">Your next cup</p><h2>Make the everyday feel considered.</h2><a class="cta" href="mailto:hello@ember.coffee?subject=EMBER%20coffee">Shop the blend</a></div></section>
+  </main>
+
+  <footer><div class="footer-cols"><div class="footer-intro"><span class="mark">EMBER</span><p class="lead" style="margin-top:14px;font-size:13px">Coffee for mornings already in motion.</p></div><div><h3>Product</h3><a href="#story">Story</a><a href="#craft">Craft</a><a href="#specs">Blend</a></div><div><h3>Company</h3><a href="#story">About</a><a href="#gallery">Journal</a><a href="mailto:hello@ember.coffee">Contact</a></div><div><h3>Support</h3><a href="mailto:hello@ember.coffee">Care</a><a href="mailto:hello@ember.coffee">Wholesale</a><a href="#reserve">Order</a></div></div><p class="fine">© 2026 EMBER Coffee. Concept site — imagery derived from supplied film.</p></footer>
+
+  <script src="main.js"></script>
+  <script>
+    const io = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('in')), { threshold: .16 });
+    document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+    const revealNow = () => document.querySelectorAll('[data-reveal]:not(.in)').forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < innerHeight * .92 && r.bottom > 0) el.classList.add('in'); });
+    addEventListener('scroll', revealNow, { passive: true }); revealNow();
+    const nav = document.getElementById('brandnav');
+    const filmEnd = () => (document.getElementById('track')?.offsetHeight ?? innerHeight * 3) - innerHeight;
+    addEventListener('scroll', () => nav.classList.toggle('on', scrollY > filmEnd() * .94), { passive: true });
+  </script>
+</body>
+</html>

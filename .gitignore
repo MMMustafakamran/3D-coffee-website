@@ -1,0 +1,8 @@
+.env
+assets/source-video.mp4
+Coffee_lid_rises,_camera_moves_202607220042.mp4
+first-frame.png
+build-frames/
+tools-runtime/
+node_modules/
+*.log
