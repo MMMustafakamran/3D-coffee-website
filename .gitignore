@@ -4,5 +4,6 @@ Coffee_lid_rises,_camera_moves_202607220042.mp4
 first-frame.png
 build-frames/
 tools-runtime/
+scroll-site-generator/
 node_modules/
 *.log
