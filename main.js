@@ -14,6 +14,19 @@ const captions = [...document.querySelectorAll(".caption")];
 const KEEP = 120;      // evict decoded bitmaps further than this from the playhead
 const AHEAD = 30;      // decode this many frames ahead (scroll-direction weighted)
 
+// Non-linear pacing: spend more scroll distance on the lid reveal and coffee
+// surface, while the quiet bean intro and final push move faster.
+const SCROLL_STOPS = [
+  [0.00, 0.00],
+  [0.08, 0.13],
+  [0.30, 0.26],
+  [0.40, 0.38],
+  [0.58, 0.50],
+  [0.74, 0.63],
+  [0.94, 0.88],
+  [1.00, 1.00],
+];
+
 const state = {
   blobs: [],           // Blob per frame (compressed, ~45KB each)
   bitmaps: new Map(),  // index → ImageBitmap (decoded window only)
@@ -147,6 +160,19 @@ function progress() {
   return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
 }
 
+function frameProgress(scrollProgress) {
+  for (let i = 1; i < SCROLL_STOPS.length; i++) {
+    const [nextScroll, nextFrame] = SCROLL_STOPS[i];
+    const [prevScroll, prevFrame] = SCROLL_STOPS[i - 1];
+    if (scrollProgress <= nextScroll) {
+      const span = nextScroll - prevScroll;
+      const t = span > 0 ? (scrollProgress - prevScroll) / span : 1;
+      return prevFrame + (nextFrame - prevFrame) * Math.min(1, Math.max(0, t));
+    }
+  }
+  return 1;
+}
+
 function updateCaptions(p) {
   for (const el of captions) {
     const tIn = +el.dataset.in, tHold = +el.dataset.hold, tOut = +el.dataset.out;
@@ -179,7 +205,7 @@ function tick(now) {
   if (state.ready) {
     const p = progress();
     const prevTarget = state.target;
-    state.target = p * (state.count - 1);
+    state.target = frameProgress(p) * (state.count - 1);
     if (state.target !== prevTarget) state.dir = state.target >= prevTarget ? 1 : -1;
     // time-based lerp: fast flicks glide, throttled tabs still converge
     const k = 1 - Math.exp(-dt * 14);
