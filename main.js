@@ -9,8 +9,6 @@ const track = document.getElementById("track");
 const loader = document.getElementById("loader");
 const loadbar = document.getElementById("loadbar");
 const scrollCue = document.getElementById("scroll-cue");
-const portal = document.getElementById("portal-transition");
-const portalCopy = portal?.querySelector(".portal-copy");
 const captions = [...document.querySelectorAll(".caption")];
 
 const KEEP = 120;      // evict decoded bitmaps further than this from the playhead
@@ -193,24 +191,6 @@ function updateCaptions(p) {
   scrollCue.style.opacity = p < 0.015 ? 1 : 0;
 }
 
-function updatePortal(p) {
-  if (!portal) return;
-  const start = 0.86;
-  const t = Math.min(1, Math.max(0, (p - start) / (1 - start)));
-  const eased = t * t * (3 - 2 * t);
-  const radius = eased * 125;
-  const copyT = Math.min(1, Math.max(0, (t - 0.48) / 0.34));
-
-  portal.style.clipPath = `circle(${radius.toFixed(2)}vmax at 50% 56%)`;
-  portal.style.setProperty("--portal", eased.toFixed(3));
-  canvas.style.transform = `scale(${(1 + eased * 0.12).toFixed(4)})`;
-  canvas.style.filter = `brightness(${(1 - eased * 0.18).toFixed(3)})`;
-
-  if (portalCopy) {
-    portalCopy.style.opacity = copyT.toFixed(3);
-    portalCopy.style.transform = `translateY(${((1 - copyT) * 24).toFixed(1)}px)`;
-  }
-}
 
 function transformBase(el) {
   if (el.classList.contains("cap-center")) return "translate(-50%, -50%)";
@@ -237,7 +217,6 @@ function tick(now) {
     manageWindow(i);
     if (i !== state.current) drawFrame(i);
     updateCaptions(p);
-    updatePortal(p);
   }
   requestAnimationFrame(tick);
 }
