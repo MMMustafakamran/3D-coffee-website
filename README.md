@@ -1,4 +1,4 @@
-# EMBER Coffee Scroll Site
+# EMBER Coffee Scroll Site testing
 
 An Apple-style scroll film built from the supplied coffee video. The opening film is scrubbed from 192 WebP frames at 24 fps, followed by a complete brand homepage with story, craft, blend details, gallery, CTA, navigation, and footer.
 
